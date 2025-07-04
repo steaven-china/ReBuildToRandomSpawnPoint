@@ -1,0 +1,57 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        # 确保文件权限正确保留
+        persist-credentials: false
+        fetch-depth: 0
+
+    - name: Setup Java Temurin 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+        cache: 'gradle'
+
+    - name: Fix gradlew.bat permissions
+      run: |
+        # 确保批处理文件不是只读
+        attrib -R .\gradlew.bat
+        # 授予完全控制权限
+        icacls .\gradlew.bat /grant Everyone:F
+        # 验证文件权限
+        icacls .\gradlew.bat
+
+    - name: Ensure gradlew.bat is executable
+      run: |
+        # 验证文件类型和内容
+        file gradlew.bat
+        # 打印前几行确认是有效的批处理文件
+        head -n 5 gradlew.bat
+
+    - name: Cache Gradle dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~\.gradle\caches
+          ~\.gradle\wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Build with Gradle
+      run: |
+        # 显式设置执行权限并运行
+        cmd /c ".\gradlew.bat build --no-daemon --stacktrace"
