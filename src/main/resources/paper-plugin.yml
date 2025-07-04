@@ -1,0 +1,5 @@
+name: ReBuilds
+version: '0.1.0-SNAPSHOT-202407040426'
+main: icu.sakina.reBuilds.ReBuilds
+api-version: '1.21.7'
+load: POSTWORLD
