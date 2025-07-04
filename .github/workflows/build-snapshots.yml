@@ -4,11 +4,10 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest  # 使用 Windows 环境执行 gradlew.bat
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository
@@ -20,8 +19,20 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - name: Grant execute permission to gradlew
-      run: icacls gradlew.bat /grant Everyone:F  # 确保批处理文件有执行权限
+    - name: Install Gradle
+      uses: gradle/gradle-build-action@v3
+      with:
+          gradle-version: wrapper # 自动检测 wrapper 指定的版本
 
-    - name: Build with Gradle
-      run: .\gradlew.bat build
+    - name: Build with installed Gradle
+      run: gradle build --no-daemon --stacktrace
+      
+    - name: Cache Gradle dependencies # 缓存依赖加速构建
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~\.gradle\caches
+          ~\.gradle\wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
