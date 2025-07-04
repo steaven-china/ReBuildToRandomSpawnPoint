@@ -294,12 +294,6 @@ class ReBuilds : JavaPlugin(), Listener {
         logger.severe("$message: ${e.message}")
         e.printStackTrace()
 
-        // 如果是在特定情况下发生的异常，可以根据情况决定是否需要做额外的操作
-        if (message.contains("when prepare 'Middle'")) {  // 示例条件判断
-            // 可以在这里添加针对初始化中心位置失败时的具体处理
-        } else if (message.contains("while handling first join event for player")) {
-            // 对于首次加入事件处理中遇到的问题，可能不需要特别操作
-        }
     }
 
     private fun logStatus() {
