@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "icu.sakina"
-version = "0.1.0-SNAPSHOT-2025070426"
+version = "0.1.0-SNAPSHOT-2025070427"
 
 repositories {
     mavenCentral()

@@ -1,8 +1,6 @@
 package icu.sakina.reBuilds
 
 import net.kyori.adventure.text.format.NamedTextColor
-import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.Bukkit
 import org.bukkit.HeightMap
 import org.bukkit.Location
 import org.bukkit.Material
@@ -11,12 +9,8 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import java.util.*
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.roundToInt
-import kotlin.math.sin
-import kotlin.math.sqrt
+import org.bukkit.plugin.java.JavaPlugin
+import kotlin.math.*
 import kotlin.random.Random
 
 class ReBuilds : JavaPlugin(), Listener {
@@ -49,7 +43,7 @@ class ReBuilds : JavaPlugin(), Listener {
         startSlowSearchForSafeSpawns()
 
         // 每10秒输出一次日志
-        statusTaskId = server.scheduler.scheduleSyncRepeatingTask(this, Runnable {
+        statusTaskId = server.scheduler.scheduleSyncRepeatingTask(this, {
             logStatus()
         }, 0L, 30 * 20L) // 10秒延迟，每10秒执行一次
     }
@@ -98,10 +92,10 @@ class ReBuilds : JavaPlugin(), Listener {
                 }
 
                 // 加载区块但不生成区块（减少负载）
-                world.getChunkAt(x, z, false) ?: run {
+                world.getChunkAt(x, z, false) /*?: run {
                     logger.warning("Failed to load chunk at $x, $z")
                     return
-                }
+                }*/
             }
 
             // 获取最高点（阻塞操作，但每次只做一次）
@@ -181,7 +175,7 @@ class ReBuilds : JavaPlugin(), Listener {
                 } catch (e: Exception) {
                     handleException(e, "Error occurred while handling first join event for player")
                     // 使用默认出生点作为后备方案
-                    overworld.spawnLocation?.let {
+                    overworld.spawnLocation.let {
                         player.teleport(it)
                         player.sendMessage("${NamedTextColor.RED}设置出生点时出错，使用默认出生点")
                     }
